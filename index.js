@@ -1,32 +1,18 @@
 const express = require('express')
 const app = express()
-port = process.env.PORT || 8080;
+const port = process.env.PORT || 8080
+const screenshot = require('./screenshot')
 
+app.get('/', (req, res) => res.status(200).json({ status: 'Server ok 👌' }))
 
-const puppeteer = require('puppeteer');
-
-
-const runScraper = async () => {
-    const browser = await puppeteer.launch({
-        // executablePath: '/usr/bin/google-chrome',
-        args: ["--no-sandbox"]
-    });
-    const page = await browser.newPage();
-    await page.goto('https://google.com');
-    // await page.screenshot({ path: 'example.png' });
-  
-    await browser.close();
-
-    return "ALL OK 101";
-}
-
-app.get('/', async (req, res) => {
-    const puppeteerResponse = await runScraper();
-    res.send(puppeteerResponse);
+app.get('/screenshot', (req, res) => {
+  const url = "https://www.facebook.com/events"
+  ;(async () => {
+    const buffer = await screenshot(url)
+    res.setHeader('Content-Disposition', 'attachment; filename="screenshot.png"')
+    res.setHeader('Content-Type', 'image/png')
+    res.send(buffer)
+  })()
 })
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
-
-// change to test
+app.listen(port, () => console.log(`app listening on port ${port}!`))
