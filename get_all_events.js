@@ -21,10 +21,10 @@ module.exports = function (url) {
             });
             await page.waitForTimeout(1000);
 
-            const listParentDiv = await page.$eval(".rl04r1d5.oygrvhab.dlv3wnog.tr9rh885.lhclo0ds.j83agx80.bp9cbjyn", el => el.innerHTML);
+            const h2 = await page.$eval("h2", el => el.innerHTML);
 
             await browser.close();
-            resolve(listParentDiv);
+            resolve(h2);
         })()
     })
 }
