@@ -20,8 +20,9 @@ module.exports = function (url) {
         });
 
         // get event date and time
+        var eventDate;
         try {
-            const eventDate = await page.$$eval("h2", (allH2) => {
+            eventDate = await page.$$eval("h2", (allH2) => {
                 const dateElement = allH2[0];
                 return dateElement.textContent;
             })
@@ -38,8 +39,9 @@ module.exports = function (url) {
         }
 
         // get event title
+        var eventTitle;
         try {
-            const eventTitle = await page.$$eval("h2", (allH2) => {
+            eventTitle = await page.$$eval("h2", (allH2) => {
                 const titleElement = allH2[1];
                 return titleElement.textContent;
             });
@@ -48,11 +50,12 @@ module.exports = function (url) {
         }
 
         // Get event organizer
+        var organizerName;
         try {
             const eventByElements = await page.$x("//*[text()[contains(.,'Event by')]]");
             if (!eventByElements || !eventByElements.length) { reject("Element not found with xpath while parsing event orgranizer name") };
             const eventByElement = eventByElements[0];
-            const organizerName = await eventByElement.$eval("a", (organizerNameLink) => {
+            organizerName = await eventByElement.$eval("a", (organizerNameLink) => {
                 return organizerNameLink.textContent;
             });
             if (!organizerName || organizerName == undefined || organizerName == "") { reject("Error parsing event organizer name") };
@@ -62,8 +65,9 @@ module.exports = function (url) {
         }
 
         // Get event cover photo
+        var imageSource;
         try {
-            const imageSource = await page.$eval("img[data-imgperflogname='profileCoverPhoto']", (img) => {
+            imageSource = await page.$eval("img[data-imgperflogname='profileCoverPhoto']", (img) => {
                 return img.getAttribute("src");
             });
             if (!imageSource || imageSource == undefined || imageSource == "") { reject("Error parsing event image src") };
