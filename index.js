@@ -4,6 +4,9 @@ const port = process.env.PORT || 8080
 const screenshot = require('./screenshot');
 const getAllEvents = require('./get_all_events');
 const getEvent = require('./get_event');
+const { default: axios } = require('axios');
+
+const JAABO_SERVER = process.env.JAABO_SERVER || "http://localhost:5000";
 
 app.get('/', (req, res) => res.status(200).json({ status: 'Server ok 👌' }))
 
@@ -28,6 +31,65 @@ app.get('/get_event', async (req, res) => {
         return res.send(response);
     }).catch((error) => {
         return res.send(error);
+    })
+});
+
+app.get('/create_event', async (req, res) => {
+    const { url } = req.query;
+    axios.post(`${JAABO_SERVER}/auth/login`, {
+        "username": "gourabxz@gmail.com",
+        "password": "letsrock"
+    }).then(response => {
+        const { access_token, _id } = response.data;
+        const config = {
+            headers: { Authorization: `Bearer ${access_token}` }
+        };
+        getEvent(url).then(response => {
+            axios.post(`${JAABO_SERVER}/admin/event/create`, {
+                userId: _id,
+                // Event basic info
+                eventTitle: response.eventTitle,
+                organizer: response.organizerName,
+                type: "facebook-scrapped",
+                category: undefined,
+                tags: undefined,
+
+                locationType: "Online event",
+                streetAddress: undefined,
+                area: undefined,
+                city: undefined,
+
+                eventUrl: response.eventUrl,
+
+                startDate: response.startDate,
+                startTime: response.startTime,
+                endDate: response.endDate,
+                endTime: response.endTime,
+
+                // Event details
+                coverImageFileName: response.imageSource,
+                summary: undefined,
+
+                // publish status
+                isPrivate: false,
+
+                openForAll: true,
+
+                isDisapproved: false,
+            }, config).then(response => {
+                res.send(response.data);
+            }).catch(error => {
+                console.log("Error making post request to jaabo server", error);
+                res.send(error);
+            })
+        }).catch(error => {
+            console.log("Error scraping event", error);
+            res.send(error);
+        })
+
+    }).catch(error => {
+        console.log("Error login jaabo server ", error);
+        res.send(error);
     })
 });
 

@@ -20,40 +20,63 @@ module.exports = function (url) {
         });
 
         // get event date and time
-        const eventDate = await page.$$eval("h2", (allH2) => {
-            const dateElement = allH2[0];
-            return dateElement.textContent;
-        })
-        if (!eventDate || eventDate == undefined || eventDate == "") { reject("Error parsing event date") };
-
-        var formatedDateObject;
         try {
-            formatedDateObject = await formatDate(eventDate);
+            const eventDate = await page.$$eval("h2", (allH2) => {
+                const dateElement = allH2[0];
+                return dateElement.textContent;
+            })
+            if (!eventDate || eventDate == undefined || eventDate == "") { reject("Error parsing event date") };
+
+            var formatedDateObject;
+            try {
+                formatedDateObject = await formatDate(eventDate);
+            } catch (error) {
+                reject(error);
+            }
         } catch (error) {
             reject(error);
         }
 
         // get event title
-        const eventTitle = await page.$$eval("h2", (allH2) => {
-            const titleElement = allH2[1];
-            return titleElement.textContent;
-        });
+        try {
+            const eventTitle = await page.$$eval("h2", (allH2) => {
+                const titleElement = allH2[1];
+                return titleElement.textContent;
+            });
+        } catch (error) {
+            reject(error);
+        }
 
         // Get event organizer
-        const eventByElements = await page.$x("//*[text()[contains(.,'Event by')]]");
-        if (!eventByElements || !eventByElements.length) { reject("Element not found with xpath while parsing event orgranizer name") };
-        const eventByElement = eventByElements[0];
-        const organizerName = await eventByElement.$eval("a", (organizerNameLink) => {
-            return organizerNameLink.textContent;
-        });
-        if (!organizerName || organizerName == undefined || organizerName == "") { reject("Error parsing event organizer name") };
+        try {
+            const eventByElements = await page.$x("//*[text()[contains(.,'Event by')]]");
+            if (!eventByElements || !eventByElements.length) { reject("Element not found with xpath while parsing event orgranizer name") };
+            const eventByElement = eventByElements[0];
+            const organizerName = await eventByElement.$eval("a", (organizerNameLink) => {
+                return organizerNameLink.textContent;
+            });
+            if (!organizerName || organizerName == undefined || organizerName == "") { reject("Error parsing event organizer name") };
 
+        } catch (error) {
+            reject(error);
+        }
 
         // Get event cover photo
-        const imageSource = await page.$eval("img[data-imgperflogname='profileCoverPhoto']", (img) => {
-            return img.getAttribute("src");
-        });
-        if (!imageSource || imageSource == undefined || imageSource == "") { reject("Error parsing event image src") };
+        try {
+            const imageSource = await page.$eval("img[data-imgperflogname='profileCoverPhoto']", (img) => {
+                return img.getAttribute("src");
+            });
+            if (!imageSource || imageSource == undefined || imageSource == "") { reject("Error parsing event image src") };
+        } catch(error) {
+            reject(error);
+        }
+
+        // Get event description
+        // const moreBtn = await page.$eval(`span[data-sigil="more"]`, moreBtn => moreBtn);
+        // await moreBtn.click();
+        // const exposedDescription = await page.$eval(".text_exposed", element => {
+        //     return element.textContent;
+        // });
 
 
         await browser.close();
@@ -61,7 +84,8 @@ module.exports = function (url) {
             ...formatedDateObject,
             eventTitle,
             organizerName,
-            imageSource
+            imageSource,
+            eventUrl
         });
 
 
