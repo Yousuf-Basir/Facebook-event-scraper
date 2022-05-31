@@ -6,7 +6,7 @@ const getAllEvents = require('./get_all_events');
 const getEvent = require('./get_event');
 const { default: axios } = require('axios');
 
-const JAABO_SERVER = process.env.JAABO_SERVER || "http://localhost:5000";
+const JAABO_SERVER = process.env.JAABO_SERVER || "https://api.jaabo.today";
 
 app.get('/', (req, res) => res.status(200).json({ status: 'Server ok 👌' }))
 
