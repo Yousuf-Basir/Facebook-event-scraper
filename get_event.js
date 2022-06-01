@@ -54,7 +54,7 @@ module.exports = function (url) {
         try {
             const eventByElements = await page.$x("//*[text()[contains(.,'Event by')]]");
             const classByElements = await page.$x("//*[text()[contains(.,'Class by')]]")
-            if (!eventByElements || !eventByElements.length || !classByElements || !classByElements.length) { 
+            if ((!eventByElements || !eventByElements.length) && (!classByElements || !classByElements.length)) { 
                 reject("Element not found with xpath while parsing event orgranizer name") 
             };
 
