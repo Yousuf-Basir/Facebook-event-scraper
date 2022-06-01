@@ -39,62 +39,67 @@ app.get('/get_event', async (req, res) => {
 });
 
 app.get('/create_event', async (req, res) => {
-    const { url } = req.query;
-    axios.post(`${JAABO_SERVER}/auth/login`, {
-        "username": "gourabxz@gmail.com",
-        "password": "letsrock"
-    }).then(response => {
-        const { access_token, _id } = response.data;
-        const config = {
-            headers: { Authorization: `Bearer ${access_token}` }
-        };
-        getEvent(url).then(response => {
-            axios.post(`${JAABO_SERVER}/admin/event/create`, {
-                userId: _id,
-                // Event basic info
-                eventTitle: response.eventTitle || "Not found",
-                organizer: response.organizerName || "Not found",
-                type: "facebook-scrapped",
-                category: undefined,
-                tags: undefined,
-
-                locationType: response.locationType || "Not found",
-                streetAddress: undefined,
-                area: undefined,
-                city: undefined,
-
-                eventUrl: response.eventUrl || "Not found",
-
-                startDate: response.startDate || "Not found",
-                startTime: response.startTime || "Not found",
-                endDate: response.endDate || "Not found",
-                endTime: response.endTime || "Not found",
-
-                // Event details
-                coverImageFileName: response.imageSource || "Not found",
-                summary: response.descriptionText || "Not found",
-
-                // publish status
-                isPrivate: false,
-
-                openForAll: true,
-
-                isDisapproved: false,
-            }, config).then(response => {
-                res.send(response.data);
+    try {
+        const { url } = req.query;
+        axios.post(`${JAABO_SERVER}/auth/login`, {
+            "username": "gourabxz@gmail.com",
+            "password": "letsrock"
+        }).then(response => {
+            const { access_token, _id } = response.data;
+            const config = {
+                headers: { Authorization: `Bearer ${access_token}` }
+            };
+            getEvent(url).then(response => {
+                axios.post(`${JAABO_SERVER}/admin/event/create`, {
+                    userId: _id,
+                    // Event basic info
+                    eventTitle: response.eventTitle || "Not found",
+                    organizer: response.organizerName || "Not found",
+                    type: "facebook-scrapped",
+                    category: undefined,
+                    tags: undefined,
+    
+                    locationType: response.locationType || "Not found",
+                    streetAddress: undefined,
+                    area: undefined,
+                    city: undefined,
+    
+                    eventUrl: response.eventUrl || "Not found",
+    
+                    startDate: response.startDate || "Not found",
+                    startTime: response.startTime || "Not found",
+                    endDate: response.endDate || "Not found",
+                    endTime: response.endTime || "Not found",
+    
+                    // Event details
+                    coverImageFileName: response.imageSource || "Not found",
+                    summary: response.descriptionText || "Not found",
+    
+                    // publish status
+                    isPrivate: false,
+    
+                    openForAll: true,
+    
+                    isDisapproved: false,
+                }, config).then(response => {
+                    res.send(response.data);
+                }).catch(error => {
+                    console.log("Error making post request to jaabo server", error);
+                    return res.send("Error: [Scope: 0.2] " + error);
+                })
             }).catch(error => {
-                console.log("Error making post request to jaabo server", error);
-                return res.send("Error: [Scope: 0.2] " + error);
+                console.log("Error scraping event", error);
+                return res.send("Error: [Scope: 0.3] " + error);
             })
+    
         }).catch(error => {
-            console.log("Error scraping event", error);
-            return res.send("Error: [Scope: 0.3] " + error);
+            console.log("Error login jaabo server ", error);
+            return res.send("Error: [Scope: 0.4] " + error);
         })
-
-    }).catch(error => {
-        console.log("Error login jaabo server ", error);
-        return res.send("Error: [Scope: 0.4] " + error);
-    })
+    } catch(error) {
+        console.log(error);
+        res.send("ERROR: scope 000" + error);
+    }
 });
 
 app.listen(port, () => console.log(`app listening on port ${port}!`))
