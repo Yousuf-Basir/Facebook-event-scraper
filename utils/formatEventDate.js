@@ -59,7 +59,25 @@ module.exports = function (dateString) {
                     var endTime = pattern4DateString.split(" – ")[1];
                     return { startDate, startTime, endDate, endTime };
                 }
-            }
+            },
+            {
+                name: "pattern5",
+                example: "JUN 23 AT 10:30 AM – JUN 25 AT 8:30 PM UTC+06",
+                regex: /[A-Z]+ \d+ AT \d+:\d+ ((?:A|P)\.?M\.?) – [A-Z]+ \d+ AT \d+:\d+ ((?:A|P)\.?M\.?)/,
+                format: (patern5DateString) => {
+                    var startDate = patern5DateString.split(" – ")[0].split(" AT ")[0]
+                    var startTime = patern5DateString.split(" – ")[0].split(" AT ")[1];
+
+                    var endDate = patern5DateString.split(" – ")[1].split(" AT ")[0];
+                    var endTime = patern5DateString.split(" – ")[1].split(" AT ")[1];
+                    return {
+                        startDate: `${startDate} ${new Date().getFullYear()}`,
+                        startTime: startTime,
+                        endDate: `${endDate} ${new Date().getFullYear()}`,
+                        endTime: endTime
+                    };
+                }
+            },
 
         ];
 
