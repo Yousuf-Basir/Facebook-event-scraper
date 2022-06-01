@@ -53,8 +53,12 @@ module.exports = function (url) {
         var organizerName;
         try {
             const eventByElements = await page.$x("//*[text()[contains(.,'Event by')]]");
-            if (!eventByElements || !eventByElements.length) { reject("Element not found with xpath while parsing event orgranizer name") };
-            const eventByElement = eventByElements[0];
+            const classByElements = await page.$x("//*[text()[contains(.,'Class by')]]")
+            if (!eventByElements || !eventByElements.length || !classByElements || !classByElements.length) { 
+                reject("Element not found with xpath while parsing event orgranizer name") 
+            };
+
+            const eventByElement = eventByElements.length?eventByElements[0]:classByElements[0];
             organizerName = await eventByElement.$eval("a", (organizerNameLink) => {
                 return organizerNameLink.textContent;
             });
