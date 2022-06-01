@@ -98,6 +98,29 @@ module.exports = function (url) {
             reject(error);
         }
 
+        // Get location type. Online or Offline
+        var locationType;
+        try {
+            const locationTypeText = await page.$$eval(".bi6gxh9e.aov4n071", (match) => {
+                try {
+                    return  match[2].textContent;
+                } catch(error) {
+                    reject("Finding location type container element" + error);
+                }
+            });
+
+            if(locationTypeText.toLowerCase().includes("online")) {
+                locationType = "Online event"
+            } else {
+                locationType = "Venue"
+            }
+            
+        } catch (error) {
+            reject("Finding location type element " + error);
+        }
+
+        // TODO: get event venue location. e.g street address, area, city.
+
         await browser.close();
         resolve({
             ...formatedDateObject,
@@ -105,7 +128,8 @@ module.exports = function (url) {
             organizerName,
             imageSource,
             eventUrl,
-            descriptionText
+            descriptionText,
+            locationType
         });
 
 

@@ -54,7 +54,7 @@ app.get('/create_event', async (req, res) => {
                 category: undefined,
                 tags: undefined,
 
-                locationType: "Online event",
+                locationType: response.locationType || "Not found",
                 streetAddress: undefined,
                 area: undefined,
                 city: undefined,
