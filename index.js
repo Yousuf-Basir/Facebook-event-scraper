@@ -48,8 +48,8 @@ app.get('/create_event', async (req, res) => {
             axios.post(`${JAABO_SERVER}/admin/event/create`, {
                 userId: _id,
                 // Event basic info
-                eventTitle: response.eventTitle,
-                organizer: response.organizerName,
+                eventTitle: response.eventTitle || "Not found",
+                organizer: response.organizerName || "Not found",
                 type: "facebook-scrapped",
                 category: undefined,
                 tags: undefined,
@@ -59,16 +59,16 @@ app.get('/create_event', async (req, res) => {
                 area: undefined,
                 city: undefined,
 
-                eventUrl: response.eventUrl,
+                eventUrl: response.eventUrl || "Not found",
 
-                startDate: response.startDate,
-                startTime: response.startTime,
-                endDate: response.endDate,
-                endTime: response.endTime,
+                startDate: response.startDate || "Not found",
+                startTime: response.startTime || "Not found",
+                endDate: response.endDate || "Not found",
+                endTime: response.endTime || "Not found",
 
                 // Event details
-                coverImageFileName: response.imageSource,
-                summary: undefined,
+                coverImageFileName: response.imageSource || "Not found",
+                summary: response.descriptionText || "Not found",
 
                 // publish status
                 isPrivate: false,

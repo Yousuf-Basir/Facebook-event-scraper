@@ -76,12 +76,18 @@ module.exports = function (url) {
         }
 
         // Get event description
-        // const moreBtn = await page.$eval(`span[data-sigil="more"]`, moreBtn => moreBtn);
-        // await moreBtn.click();
-        // const exposedDescription = await page.$eval(".text_exposed", element => {
-        //     return element.textContent;
-        // });
-
+        var descriptionText;
+        try {
+            const seeMoreTextMatches = await page.$x("//*[text()[contains(.,'See more')]]");
+            if (!seeMoreTextMatches || !seeMoreTextMatches.length) { reject("Element not found with xpath while trying to find See more button") };
+            const seeMoreButton = seeMoreTextMatches[0];
+            await seeMoreButton.click();
+            descriptionText = await page.$eval(".dati1w0a.hv4rvrfc > .p75sslyk", (descriptionContainer) => {
+                return descriptionContainer.textContent;
+            });
+        } catch(error) {
+            reject(error);
+        }
 
         await browser.close();
         resolve({
@@ -89,7 +95,8 @@ module.exports = function (url) {
             eventTitle,
             organizerName,
             imageSource,
-            eventUrl
+            eventUrl,
+            descriptionText
         });
 
 
