@@ -30,7 +30,7 @@ app.get('/get_event', async (req, res) => {
     getEvent(url).then((response) => {
         return res.send(response);
     }).catch((error) => {
-        return res.send(error);
+        return res.send("Error: [Scope: 0.1] " + error);
     })
 });
 
@@ -80,16 +80,16 @@ app.get('/create_event', async (req, res) => {
                 res.send(response.data);
             }).catch(error => {
                 console.log("Error making post request to jaabo server", error);
-                res.send(error);
+                return res.send("Error: [Scope: 0.2] " + error);
             })
         }).catch(error => {
             console.log("Error scraping event", error);
-            res.send(error);
+            return res.send("Error: [Scope: 0.3] " + error);
         })
 
     }).catch(error => {
         console.log("Error login jaabo server ", error);
-        res.send(error);
+        return res.send("Error: [Scope: 0.4] " + error);
     })
 });
 

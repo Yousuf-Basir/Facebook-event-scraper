@@ -58,14 +58,19 @@ module.exports = function (url) {
                 reject("Element not found with xpath while parsing event orgranizer name") 
             };
 
-            const eventByElement = eventByElements.length?eventByElements[0]:classByElements[0];
-            organizerName = await eventByElement.$eval("a", (organizerNameLink) => {
-                return organizerNameLink.textContent;
+            const eventByElement = eventByElements?.length?eventByElements[0]:classByElements[0];
+            organizerName = await eventByElement.evaluate(el => {
+                if(el.textContent.includes("by")){
+                    return el.textContent.split("by")[1]?.trim();
+                } else {
+                    return "Unknown organizer"
+                }
             });
+
             if (!organizerName || organizerName == undefined || organizerName == "") { reject("Error parsing event organizer name") };
 
         } catch (error) {
-            reject(error);
+            reject("Error finding organization name " + error);
         }
 
         // Get event cover photo
