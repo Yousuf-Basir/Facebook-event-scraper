@@ -4,7 +4,7 @@ module.exports = function (dateString) {
 
         const allRegex = [
             {
-                name: "patern1",
+                name: "pattern1",
                 example: "3 JUN AT 10:00 – 4 JUN AT 13:00",
                 regex: /\d+ [A-Z]+ AT \d+:\d+ – \d+ [A-Z]+ AT \d+:\d+/,
                 format: (patern1DateString) => {
@@ -22,28 +22,41 @@ module.exports = function (dateString) {
                 }
             },
             {
-                name: "patern2",
+                name: "pattern2",
                 example: "SUNDAY, 25 DECEMBER 2022 AT 10:30 UTC+06",
                 regex: /[A-Z]+, \d+ [A-Z]+ \d+ AT \d+:\d+/,
-                format: (patern2DateString) => {
-                    var startDate = patern2DateString.split(" AT ")[0]
-                    var startTime = patern2DateString.split(" AT ")[1];
+                format: (pattern2DateString) => {
+                    var startDate = pattern2DateString.split(" AT ")[0]
+                    var startTime = pattern2DateString.split(" AT ")[1];
 
-                    var endDate = patern2DateString.split(" AT ")[0]
-                    var endTime = patern2DateString.split(" AT ")[1];
+                    var endDate = pattern2DateString.split(" AT ")[0]
+                    var endTime = pattern2DateString.split(" AT ")[1];
                     return { startDate, startTime, endDate, endTime };
                 }
             },
             {
-                name: "patern3",
+                name: "pattern3",
                 example: "FRIDAY, 27 MAY 2022 FROM 20:30-22:30 UTC+06",
                 regex: /[A-Z]+, \d+ [A-Z]+ \d+ FROM \d+:\d+-\d+:\d+/,
-                format: (patern2DateString) => {
-                    var startDate = patern2DateString.split(" FROM ")[0]
-                    var startTime = patern2DateString.split(" FROM ")[1].split("-")[0];
+                format: (pattern3DateString) => {
+                    var startDate = pattern3DateString.split(" FROM ")[0]
+                    var startTime = pattern3DateString.split(" FROM ")[1].split("-")[0];
 
-                    var endDate = patern2DateString.split(" FROM ")[0]
-                    var endTime = patern2DateString.split(" FROM ")[1].split("-")[1];
+                    var endDate = pattern3DateString.split(" FROM ")[0]
+                    var endTime = pattern3DateString.split(" FROM ")[1].split("-")[1];
+                    return { startDate, startTime, endDate, endTime };
+                }
+            },
+            {
+                name: "pattern4",
+                example: "WEDNESDAY, JULY 13, 2022 AT 12:30 AM – 6:30 PM UTC+01",
+                regex: /[A-Z]+, [A-Z]+ \d+, \d+ AT \d+:\d+ ((?:A|P)\.?M\.?) – \d+:\d+ ((?:A|P)\.?M\.?)/,
+                format: (pattern4DateString) => {
+                    var startDate = pattern4DateString.split(" – ")[0].split(" AT ")[0]
+                    var startTime = pattern4DateString.split(" – ")[0].split(" AT ")[1];
+
+                    var endDate = pattern4DateString.split(" – ")[0].split(" AT ")[0];
+                    var endTime = pattern4DateString.split(" – ")[1];
                     return { startDate, startTime, endDate, endTime };
                 }
             }
