@@ -121,7 +121,7 @@ module.exports = function (url) {
 
         // TODO: get event venue location. e.g street address, area, city.
 
-        await browser.close();
+        
         return resolve({
             ...formatedDateObject,
             eventTitle,
@@ -133,5 +133,7 @@ module.exports = function (url) {
         });
 
 
+    }).finally(() => {
+        await browser.close();
     })
 }
