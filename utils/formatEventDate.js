@@ -78,6 +78,19 @@ module.exports = function (dateString) {
                     };
                 }
             },
+            {
+                name: "pattern6",
+                example: "SUNDAY, JUNE 5, 2022 AT 10:00 AM UTC+06",
+                regex: /[A-Z]+, [A-Z]+ \d+, \d+ AT \d+:\d+ ((?:A|P)\.?M\.?)/,
+                format: (pattern6DateString) => {
+                    var startDate = pattern6DateString.split(" AT ")[0]
+                    var startTime = pattern6DateString.split(" AT ")[1];
+
+                    var endDate = pattern6DateString.split(" AT ")[0]
+                    var endTime = pattern6DateString.split(" AT ")[1];
+                    return { startDate, startTime, endDate, endTime };
+                }
+            },
 
         ];
 
