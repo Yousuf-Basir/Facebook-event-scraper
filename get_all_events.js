@@ -24,11 +24,20 @@ module.exports = function (url) {
             await page.waitForTimeout(1000);
             var eventLinks = [];
             try {
-                const hrefs = await page.$$eval('a', matches => matches.map(a => a.href));
+                const hrefs = await page.$$eval('a', matches => matches.map(a => {
+                    let textContent = a.textContent.split("HAPPENING NOW");
+                    if(textContent.length){
+                        textContent = textContent[1]
+                    }
+                    return {
+                        href: a.href, 
+                        eventName: textContent
+                    }
+                }));
 
                 if(!hrefs || !hrefs.length) { return reject("No link element found") };
 
-                eventLinks = hrefs.filter((link) => link.match(eventLinkRegex));
+                eventLinks = hrefs.filter((link) => link.href.match(eventLinkRegex));
 
                 if(!eventLinks.length) { return reject("No event link found") };
                 
