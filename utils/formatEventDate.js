@@ -111,14 +111,14 @@ module.exports = function (dateString) {
                             endTime: eventDateObject.endTime,
                         })
                     } else {
-                        reject(`Error parsing ${allRegex[i].name}. Trying to parse ${dateString} SCOPE-1`)
+                        return reject(`Error parsing ${allRegex[i].name}. Trying to parse ${dateString} SCOPE-1`)
                     }
                 } catch (err) {
-                    reject(`Error parsing ${allRegex[i].name}. Trying to parse ${dateString} SCOPE-2`)
+                    return reject(`Error parsing ${allRegex[i].name}. Trying to parse ${dateString} SCOPE-2`)
                 }
             } else {
                 if(i == allRegex.length-1) {
-                  reject(`No patern found while trying to parse ${dateString}`)
+                    return reject(`No patern found while trying to parse ${dateString}`)
                 }
               }
         }
