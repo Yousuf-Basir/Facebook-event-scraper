@@ -24,10 +24,12 @@ module.exports = function (url) {
             await page.waitForTimeout(1000);
             var eventLinks = [];
             try {
-                const hrefs = await page.$$eval('a', matches => matches.map(a => {
-                    let textContent = a.textContent.split("HAPPENING NOW");
-                    if(textContent.length){
-                        textContent = textContent[1]
+                const hrefs = await page.$$eval('a', matches => matches.map((a, i) => {
+                    let textContent = `Event ${i+1}`;
+                    if( a.textContent.split("HAPPENING NOW").length){
+                        textContent = a.textContent.split("HAPPENING NOW")[1];
+                    }else {
+                        textContent = a.textContent;
                     }
                     return {
                         href: a.href, 
