@@ -1,12 +1,12 @@
 const puppeteer = require('puppeteer');
 const formatDate = require("./utils/formatEventDate");
 
-const facebookEventUrlRegex = /https:\/\/www.facebook.com\/events\/\d+\//;
+const facebookEventUrlRegex = /(?:https?:\/\/)?(?:www\.)?(mbasic.facebook|m\.facebook|facebook|fb)\.(com|me)\/(?:(?:\w\.)*#!\/)?(?:event\/)?(?:[\w\-\.]*\/)*([\w\-\.]*)/;
 
 module.exports = function (url) {
     return new Promise(async (resolve, reject) => {
         const urlMatches = url.match(facebookEventUrlRegex);
-        if (!Array.isArray(urlMatches) || !urlMatches.length) { reject("URL not valid") }
+        if (!Array.isArray(urlMatches) || !urlMatches.length) { return reject("URL not valid") }
 
         const eventUrl = urlMatches[0];
 
@@ -26,16 +26,16 @@ module.exports = function (url) {
                 const dateElement = allH2[0];
                 return dateElement.textContent;
             })
-            if (!eventDate || eventDate == undefined || eventDate == "") { reject("Error parsing event date") };
+            if (!eventDate || eventDate == undefined || eventDate == "") { return reject("Error parsing event date") };
 
             var formatedDateObject;
             try {
                 formatedDateObject = await formatDate(eventDate);
             } catch (error) {
-                reject(error);
+                return reject(error);
             }
         } catch (error) {
-            reject(error);
+            return reject(error);
         }
 
         // get event title
@@ -46,7 +46,7 @@ module.exports = function (url) {
                 return titleElement.textContent;
             });
         } catch (error) {
-            reject(error);
+            return reject(error);
         }
 
         // Get event organizer
@@ -55,7 +55,7 @@ module.exports = function (url) {
             const eventByElements = await page.$x("//*[text()[contains(.,'Event by')]]");
             const classByElements = await page.$x("//*[text()[contains(.,'Class by')]]")
             if ((!eventByElements || !eventByElements.length) && (!classByElements || !classByElements.length)) { 
-                reject("Element not found with xpath while parsing event orgranizer name") 
+                return reject("Element not found with xpath while parsing event orgranizer name") 
             };
 
             const eventByElement = eventByElements?.length?eventByElements[0]:classByElements[0];
@@ -67,10 +67,10 @@ module.exports = function (url) {
                 }
             });
 
-            if (!organizerName || organizerName == undefined || organizerName == "") { reject("Error parsing event organizer name") };
+            if (!organizerName || organizerName == undefined || organizerName == "") { return reject("Error parsing event organizer name") };
 
         } catch (error) {
-            reject("Error finding organization name " + error);
+            return reject("Error finding organization name " + error);
         }
 
         // Get event cover photo
@@ -79,23 +79,23 @@ module.exports = function (url) {
             imageSource = await page.$eval("img[data-imgperflogname='profileCoverPhoto']", (img) => {
                 return img.getAttribute("src");
             });
-            if (!imageSource || imageSource == undefined || imageSource == "") { reject("Error parsing event image src") };
+            if (!imageSource || imageSource == undefined || imageSource == "") { return reject("Error parsing event image src") };
         } catch(error) {
-            reject(error);
+            return reject(error);
         }
 
         // Get event description
         var descriptionText;
         try {
             const seeMoreTextMatches = await page.$x("//*[text()[contains(.,'See more')]]");
-            if (!seeMoreTextMatches || !seeMoreTextMatches.length) { reject("Element not found with xpath while trying to find See more button") };
+            if (!seeMoreTextMatches || !seeMoreTextMatches.length) { return reject("Element not found with xpath while trying to find See more button") };
             const seeMoreButton = seeMoreTextMatches[0];
             await seeMoreButton.click();
             descriptionText = await page.$eval(".dati1w0a.hv4rvrfc > .p75sslyk", (descriptionContainer) => {
                 return descriptionContainer.textContent;
             });
         } catch(error) {
-            reject(error);
+            return reject(error);
         }
 
         // Get location type. Online or Offline
@@ -105,7 +105,7 @@ module.exports = function (url) {
                 try {
                     return  match[2].textContent;
                 } catch(error) {
-                    reject("Finding location type container element" + error);
+                    return reject("Finding location type container element" + error);
                 }
             });
 
@@ -116,13 +116,13 @@ module.exports = function (url) {
             }
             
         } catch (error) {
-            reject("Finding location type element " + error);
+            return reject("Finding location type element " + error);
         }
 
         // TODO: get event venue location. e.g street address, area, city.
 
         await browser.close();
-        resolve({
+        return resolve({
             ...formatedDateObject,
             eventTitle,
             organizerName,
