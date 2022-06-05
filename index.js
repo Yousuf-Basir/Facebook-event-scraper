@@ -65,9 +65,9 @@ app.get('/create_event', async (req, res) => {
                     tags: undefined,
     
                     locationType: response.locationType || "Not found",
-                    streetAddress: undefined,
-                    area: undefined,
-                    city: undefined,
+                    streetAddress: "",
+                    area: "",
+                    city: response.cityName,
     
                     eventUrl: response.eventUrl || "Not found",
     
