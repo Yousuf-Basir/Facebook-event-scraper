@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const formatDate = require("./utils/formatEventDate");
+const getCityFromText = require('./utils/getCityFromText');
 
 const facebookEventUrlRegex = /(?:https?:\/\/)?(?:www\.)?(mbasic.facebook|m\.facebook|facebook|fb)\.(com|me)\/(?:(?:\w\.)*#!\/)?(?:event\/)?(?:[\w\-\.]*\/)*([\w\-\.]*)/;
 
@@ -119,9 +120,20 @@ module.exports = function (url) {
             return reject("Finding location type element " + error);
         }
 
-        // TODO: get event venue location. e.g street address, area, city.
+        //  get event venue location. e.g street address, area, city. from event description
+        // if city name of Bangladesh not found then reject this event
+
+        var cityName;
+        try {
+            cityName = getCityFromText(descriptionText || "") || "";
+        } catch(error) {
+            return reject("Could not parse event description for finding city name " + error);
+        }
+
+
 
         await browser.close();
+
         return resolve({
             ...formatedDateObject,
             eventTitle,
@@ -129,7 +141,8 @@ module.exports = function (url) {
             imageSource,
             eventUrl,
             descriptionText,
-            locationType
+            locationType,
+            cityName
         });
 
 

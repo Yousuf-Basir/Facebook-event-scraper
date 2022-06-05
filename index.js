@@ -50,6 +50,11 @@ app.get('/create_event', async (req, res) => {
                 headers: { Authorization: `Bearer ${access_token}` }
             };
             getEvent(url).then(response => {
+                // reject this event if no city name of bangladesh is found in event description text
+                if(response?.locationType && response?.locationType == 'Venue' && response.cityName == "") {
+                    return res.send("This event is offline and does not have any valid city name. Rejecting this event from importing to Jaabo server.");
+                }
+
                 axios.post(`${JAABO_SERVER}/admin/event/create`, {
                     userId: _id,
                     // Event basic info
