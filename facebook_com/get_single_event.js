@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
-const formatDate = require("./utils/formatEventDate");
-const getCityFromText = require('./utils/getCityFromText');
+const formatDate = require("../utils/formatEventDate");
+const getCityFromText = require('../utils/getCityFromText');
 
 const facebookEventUrlRegex = /(?:https?:\/\/)?(?:www\.)?(mbasic.facebook|m\.facebook|facebook|fb)\.(com|me)\/(?:(?:\w\.)*#!\/)?(?:event\/)?(?:[\w\-\.]*\/)*([\w\-\.]*)/;
 

@@ -6,8 +6,8 @@ const app = express()
 app.use(cors());
 const port = process.env.PORT || 8080
 const screenshot = require('./screenshot');
-const getAllEvents = require('./get_all_events');
-const getEvent = require('./get_event');
+const getEventList = require('./facebook_com/get_event_list');
+const getSingleEvent = require('./facebook_com/get_single_event');
 const { default: axios } = require('axios');
 
 const JAABO_SERVER = process.env.JAABO_SERVER || "https://api.jaabo.today";
@@ -24,21 +24,21 @@ app.get('/screenshot', (req, res) => {
         })()
 });
 
-app.get('/get_all_events', async (req, res) => {
-    const allEvents = await getAllEvents()
+app.get('/facebook_com/get_event_list', async (req, res) => {
+    const allEvents = await getEventList()
     res.send(allEvents)
 });
 
-app.get('/get_event', async (req, res) => {
+app.get('/facebook_com/get_single_event', async (req, res) => {
     const { url } = req.query;
-    getEvent(url).then((response) => {
+    getSingleEvent(url).then((response) => {
         return res.send(response);
     }).catch((error) => {
         return res.send("Error: [Scope: 0.1] " + error);
     })
 });
 
-app.get('/create_event', async (req, res) => {
+app.get('/facebook_com/create_event', async (req, res) => {
     try {
         const { url } = req.query;
         axios.post(`${JAABO_SERVER}/auth/login`, {
@@ -49,7 +49,7 @@ app.get('/create_event', async (req, res) => {
             const config = {
                 headers: { Authorization: `Bearer ${access_token}` }
             };
-            getEvent(url).then(response => {
+            getSingleEvent(url).then(response => {
                 // reject this event if no city name of bangladesh is found in event description text
                 if(response?.locationType && response?.locationType == 'Venue' && response.cityName == "") {
                     return res.send("Error: This event is offline and does not have any valid city name. Rejecting this event from importing to Jaabo server.");
