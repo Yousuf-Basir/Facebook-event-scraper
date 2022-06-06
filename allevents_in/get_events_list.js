@@ -16,7 +16,9 @@ module.exports = function(cityName) {
         var hrefs = [];
         for(var i = 0; i < links.length; i++) {
             const href = $(links[i]).attr('href');
-            hrefs.push(href);
+            hrefs.push({
+                href: href
+            });
         }
         resolve (hrefs);
     });
