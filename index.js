@@ -90,6 +90,7 @@ app.get('/facebook_com/create_event', async (req, res) => {
                     openForAll: true,
 
                     isDisapproved: false,
+                    isPublished: true
                 }, config).then(response => {
                     res.send(response.data);
                 }).catch(error => {
@@ -184,6 +185,8 @@ app.get('/allevents_in/create_event', async (req, res) => {
                     openForAll: true,
 
                     isDisapproved: false,
+
+                    isPublished: true
                 }, config).then(response => {
                     res.send(response.data);
                 }).catch(error => {
